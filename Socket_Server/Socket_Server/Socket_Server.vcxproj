@@ -146,11 +146,13 @@
   <ItemGroup>
     <ClCompile Include="interface_Func.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Multiplexing.cpp" />
     <ClCompile Include="server_TCP_1.cpp" />
     <ClCompile Include="udp_server_1.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="interface_Func.h" />
+    <ClInclude Include="Multiplexing.h" />
     <ClInclude Include="server_TCP_1.h" />
     <ClInclude Include="udp_server_1.h" />
   </ItemGroup>
