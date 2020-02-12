@@ -144,16 +144,28 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AsyncServer.cpp" />
+    <ClCompile Include="CriticalSection_1.cpp" />
+    <ClCompile Include="CriticalSection_2.cpp" />
     <ClCompile Include="interface_Func.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Multiplexing.cpp" />
+    <ClCompile Include="OverlappedIO.cpp" />
+    <ClCompile Include="Semaphore_1.cpp" />
     <ClCompile Include="server_TCP_1.cpp" />
+    <ClCompile Include="thread_create_1.cpp" />
     <ClCompile Include="udp_server_1.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AsyncServer.h" />
+    <ClInclude Include="CriticalSection_1.h" />
+    <ClInclude Include="CriticalSection_2.h" />
     <ClInclude Include="interface_Func.h" />
     <ClInclude Include="Multiplexing.h" />
+    <ClInclude Include="OverlappedIO.h" />
+    <ClInclude Include="Semaphore_1.h" />
     <ClInclude Include="server_TCP_1.h" />
+    <ClInclude Include="thread_create_1.h" />
     <ClInclude Include="udp_server_1.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

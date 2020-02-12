@@ -1,11 +1,2 @@
-﻿  Multiplexing.cpp
-D:\Project reposit\Socket Programming\Socket_Server\Socket_Server\Multiplexing.cpp(66,17): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-D:\Project reposit\Socket Programming\Socket_Server\Socket_Server\Multiplexing.cpp(75,13): warning C4477: 'printf' : 서식 문자열 '%d'에 'int' 형식의 인수가 필요하지만 variadic 인수 1의 형식이 'SOCKET'입니다.
-D:\Project reposit\Socket Programming\Socket_Server\Socket_Server\Multiplexing.cpp(75,13): message : 서식 문자열에서 '%lld'을(를) 사용하는 것이 좋습니다.
-D:\Project reposit\Socket Programming\Socket_Server\Socket_Server\Multiplexing.cpp(75,13): message : 서식 문자열에서 '%Id'을(를) 사용하는 것이 좋습니다.
-D:\Project reposit\Socket Programming\Socket_Server\Socket_Server\Multiplexing.cpp(75,13): message : 서식 문자열에서 '%I64d'을(를) 사용하는 것이 좋습니다.
-D:\Project reposit\Socket Programming\Socket_Server\Socket_Server\Multiplexing.cpp(84,14): warning C4477: 'printf' : 서식 문자열 '%d'에 'int' 형식의 인수가 필요하지만 variadic 인수 1의 형식이 'SOCKET'입니다.
-D:\Project reposit\Socket Programming\Socket_Server\Socket_Server\Multiplexing.cpp(84,14): message : 서식 문자열에서 '%lld'을(를) 사용하는 것이 좋습니다.
-D:\Project reposit\Socket Programming\Socket_Server\Socket_Server\Multiplexing.cpp(84,14): message : 서식 문자열에서 '%Id'을(를) 사용하는 것이 좋습니다.
-D:\Project reposit\Socket Programming\Socket_Server\Socket_Server\Multiplexing.cpp(84,14): message : 서식 문자열에서 '%I64d'을(를) 사용하는 것이 좋습니다.
+﻿  AsyncServer.cpp
   Socket_Server.vcxproj -> D:\Project reposit\Socket Programming\Socket_Server\x64\Debug\Socket_Server.exe

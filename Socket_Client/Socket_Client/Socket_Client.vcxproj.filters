@@ -24,6 +24,9 @@
     <ClCompile Include="client_UDP_1.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="OutOfBand_Send.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="client_TCP_1.h">
@@ -33,6 +36,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="client_UDP_1.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="OutOfBand_Send.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
