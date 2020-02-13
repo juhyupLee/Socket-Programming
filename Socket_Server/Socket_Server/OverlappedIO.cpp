@@ -7,8 +7,12 @@ int OverlappedIO(int argc, char* argv[])
 {
 	WSAData wsaData;
 	SOCKADDR_IN sockAddr;
-	SOCKET servSock;
+	SOCKET servSock,clntSock;
+	WSABUF wsaBuf;
 
+	char buf[1024];
+	wsaBuf.buf = buf;
+	wsaBuf.len = 1024;
 
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData) == -1)
 	{
@@ -17,10 +21,56 @@ int OverlappedIO(int argc, char* argv[])
 	}
 
 
-	//servSock =WSASocket(AF_INET, 0, ? , ? , g ? , dwFlags);
+	servSock =WSASocket(PF_INET, SOCK_STREAM, 0 , NULL , 0 ,WSA_FLAG_OVERLAPPED);
+	if (servSock == INVALID_SOCKET)
+	{
+		cout << "Socket Fail" << endl;
+		return -1;
+	}
 
-	sockAddr.sin_addr.s
+	memset(&sockAddr, 0, sizeof(sockAddr));
 
+	sockAddr.sin_family = AF_INET;
+	sockAddr.sin_port = htons(atoi(argv[1]));
+	sockAddr.sin_addr.s_addr = htons(atoi(argv[2]));
+
+	if (-1 == bind(servSock, (sockaddr*)& sockAddr, sizeof(sockAddr)))
+	{
+		cout << "Bind Error" << endl;
+		return -1;
+	}
+
+	if (listen(servSock, 5) == -1)
+	{
+		cout << "Listen Error" << endl;
+		return -1;
+	}
+	int szClntAddr = 0;
+
+	clntSock = accept(servSock, (SOCKADDR*)& sockAddr, &szClntAddr);
+
+	DWORD recvByte = 0;
+	DWORD flag = 0;
+
+	WSAOVERLAPPED overlapped;
+
+	WSAEVENT eventObj;
+
+	eventObj = WSACreateEvent();
+
+	overlapped.hEvent = eventObj;
+
+
+	if (WSARecv(clntSock, &wsaBuf, 1, &recvByte, &flag, &overlapped, NULL) == SOCKET_ERROR)
+	{
+		if (WSAGetLastError() == WSA_IO_PENDING)
+		{
+			cout << "Background Date Send" << endl;
+			WSAWaitForMultipleEvents(1, &eventObj, true, WSA_INFINITE, false);
+			WSAGetOverlappedResult()
+		}
+
+	}
 
 	return 0;
 }
