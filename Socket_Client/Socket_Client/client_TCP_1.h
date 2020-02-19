@@ -34,6 +34,8 @@ void Client_TCP_1(int argc, char* argv[])
 		ErrorMessage("socket Error");
 	}
 
+	cout << "---Client Socket:---" << hSocket << endl;
+
 	memset(&servAddr, 0, sizeof(servAddr));
 	servAddr.sin_family = AF_INET;
 	servAddr.sin_addr.s_addr = inet_addr(argv[1]);

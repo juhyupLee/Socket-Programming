@@ -1,2 +1,5 @@
-﻿  OverlappedIO.cpp
-  Socket_Server.vcxproj -> C:\Side Project\SocketProgramming\Socket_Server\x64\Debug\Socket_Server.exe
+﻿  main.cpp
+  server_TCP_1.cpp
+  코드를 생성하고 있습니다...
+D:\Project reposit\Socket Programming\Socket_Server\Socket_Server\server_TCP_1.cpp(14,15): warning C4101: 'a' :참조되지 않은 지역 변수입니다.
+  Socket_Server.vcxproj -> D:\Project reposit\Socket Programming\Socket_Server\x64\Debug\Socket_Server.exe

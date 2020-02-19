@@ -8,12 +8,13 @@
 int main(int argc, char* argv[])
 {
 
+	Server_TCP_19(argc, argv);
 	//Server_UDP_1(argc, argv);
 	//Multiplexing_1(argc, argv);
 	//Thread_Create_1(argc, argv);
 	//Critical_Section_1(argc, argv);
 	//Semaphroe_1(argc, argv);
-	AsyncServer(argc, argv);
+	//AsyncServer(argc, argv);
 
 
 

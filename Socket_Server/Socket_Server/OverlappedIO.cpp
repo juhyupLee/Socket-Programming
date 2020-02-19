@@ -32,7 +32,7 @@ int OverlappedIO(int argc, char* argv[])
 
 	sockAddr.sin_family = AF_INET;
 	sockAddr.sin_port = htons(atoi(argv[1]));
-	sockAddr.sin_addr.s_addr = htons(atoi(argv[2]));
+	sockAddr.sin_addr.s_addr = htonl(INADDR_ANY);
 
 	if (-1 == bind(servSock, (sockaddr*)& sockAddr, sizeof(sockAddr)))
 	{
@@ -51,6 +51,7 @@ int OverlappedIO(int argc, char* argv[])
 
 	DWORD recvByte = 0;
 	DWORD flag = 0;
+	DWORD sendByte = 0;
 
 	WSAOVERLAPPED overlapped;
 
@@ -65,12 +66,34 @@ int OverlappedIO(int argc, char* argv[])
 	{
 		if (WSAGetLastError() == WSA_IO_PENDING)
 		{
-			cout << "Background Date Send" << endl;
+			cout << "Background Data Recv...." << endl;
 			WSAWaitForMultipleEvents(1, &eventObj, true, WSA_INFINITE, false);
-			WSAGetOverlappedResult()
+			if (WSAGetOverlappedResult(clntSock, &overlapped, &recvByte, 0, NULL))
+			{
+				cout << "Recv Finish" << endl;
+			}
 		}
-
 	}
+	//WSASend에서 dwFlag는?
+	//WSARecv에서는 flag변수의 주소를 넣어줫는데,,?
+	if (WSASend(clntSock, &wsaBuf, 1, &sendByte, 0, &overlapped, NULL) == SOCKET_ERROR)
+	{
+		if (WSAGetLastError() == WSA_IO_PENDING)
+		{
+			cout << "Background Date Send.." << endl;
+			if (WSAGetOverlappedResult(clntSock, &overlapped, &sendByte, 0, NULL))
+			{
+				cout << "Send Finish" << endl;
+			}
+		}
+	}
+
+	closesocket(clntSock);
+	closesocket(servSock);
+	WSACloseEvent(eventObj);
+
+	WSACleanup();
+
 
 	return 0;
 }

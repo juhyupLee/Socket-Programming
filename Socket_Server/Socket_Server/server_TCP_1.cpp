@@ -56,6 +56,7 @@ void Server_TCP_19(int argc, char* argv[])
 	for (int i = 0; i < 5; ++i)
 	{
 		hCIntSock = accept(hServSock, (SOCKADDR*)& cIntAddr, &cIntAdrSize);
+		cout << "----Accept Return Socket:----" << hCIntSock << endl;
 		if (hCIntSock == -1)
 		{
 			ErrorMessage("accept() error");
