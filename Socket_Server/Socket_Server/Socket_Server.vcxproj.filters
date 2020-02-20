@@ -42,9 +42,6 @@
     <ClCompile Include="Semaphore_1.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="AsyncServer.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="OverlappedIO.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>

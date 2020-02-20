@@ -144,7 +144,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AsyncServer.cpp" />
     <ClCompile Include="CriticalSection_1.cpp" />
     <ClCompile Include="CriticalSection_2.cpp" />
     <ClCompile Include="interface_Func.cpp" />

@@ -21,7 +21,8 @@ int OverlappedIO(int argc, char* argv[])
 {
 
 	WSAData wsaData;
-	SOCKADDR_IN sockAddr;
+	SOCKADDR_IN sockAddr,recvAddr;
+
 	SOCKET hLisnSock,hRecvSock;
 	
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData) == -1)
@@ -30,10 +31,9 @@ int OverlappedIO(int argc, char* argv[])
 		return -1;
 	}
 
-
 	hLisnSock =WSASocket(PF_INET, SOCK_STREAM, 0 , NULL , 0 ,WSA_FLAG_OVERLAPPED);
 	u_long nonBlockingMode = 1;
-	ioctlsocket(hLisnSock, 0, &nonBlockingMode); // non blocking mode accept
+	ioctlsocket(hLisnSock, FIONBIO, &nonBlockingMode); // non blocking mode accept
 
 	if (hLisnSock == INVALID_SOCKET)
 	{
@@ -53,22 +53,23 @@ int OverlappedIO(int argc, char* argv[])
 		return -1;
 	}
 
-	if (listen(hLisnSock, 5) == -1)
+	if (listen(hLisnSock, 5) == SOCKET_ERROR)
 	{
 		cout << "Listen Error" << endl;
 		return -1;
 	}
-	int szClntAddr = 0;
+	int szClntAddr = sizeof(recvAddr);
 
 
 	while (1)
 	{
 		SleepEx(100, 1);
-		hRecvSock = accept(hLisnSock, (SOCKADDR*)& sockAddr, &szClntAddr);
+		hRecvSock = accept(hLisnSock, (SOCKADDR*)&recvAddr, &szClntAddr);
 		if (hRecvSock == INVALID_SOCKET)
 		{
 			if (WSAEWOULDBLOCK == WSAGetLastError())
 			{
+				//cout << "WSAWOULDBLOCK" << endl;
 				continue;
 			}
 			else
@@ -129,10 +130,15 @@ void CALLBACK ReadCompRoutine(DWORD dwError, DWORD szRecvBytes, LPWSAOVERLAPPED 
 void CALLBACK WriteCompRoutine(DWORD dwError, DWORD szRecvBytes, LPWSAOVERLAPPED lpOverlapped, DWORD flags)
 {
 
-	//LP_PER_IO_DATA temp = (LP_PER_IO_DATA)lpOverlapped->hEvent;
-	//SOCKET hRecvSocket = temp->recvSock;
-	//DWORD sentByte = 0;
-	//DWORD dwFlag = 0;
+	LP_PER_IO_DATA temp = (LP_PER_IO_DATA)lpOverlapped->hEvent;
+	SOCKET hRecvSocket = temp->recvSock;
 
-	//WSASend(hRecvSocket, &(temp->wsaBuf.buf), 1, &sentByte, 0, lpOverlapped, WriteCompRoutione);
+	temp->wsaBuf.buf = temp->buf;
+	temp->wsaBuf.len = BUF_SIZE;
+
+	DWORD readByte = 0;
+	DWORD dwFlag = 0;
+
+	WSARecv(hRecvSocket, &(temp->wsaBuf), 1, &readByte, &dwFlag, lpOverlapped, ReadCompRoutine);
+
 }
