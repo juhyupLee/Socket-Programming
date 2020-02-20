@@ -1,19 +1,29 @@
 #include "OverlappedIO.h"
 #include <WinSock2.h>
 #include <iostream>
+#include <cstdlib>
+#include "interface_Func.h"
 using namespace std;
+
+#define BUF_SIZE 1024
+
+typedef struct 
+{
+	SOCKET recvSock;
+	WSABUF wsaBuf;
+	char buf[BUF_SIZE];
+
+}PER_IO_DATA,*LP_PER_IO_DATA;
+void CALLBACK ReadCompRoutine(DWORD dwError, DWORD szRecvBytes, LPWSAOVERLAPPED lpOverlapped, DWORD flags);
+void CALLBACK WriteCompRoutine(DWORD dwError, DWORD szRecvBytes, LPWSAOVERLAPPED lpOverlapped, DWORD flags);
 
 int OverlappedIO(int argc, char* argv[])
 {
+
 	WSAData wsaData;
 	SOCKADDR_IN sockAddr;
-	SOCKET servSock,clntSock;
-	WSABUF wsaBuf;
-
-	char buf[1024];
-	wsaBuf.buf = buf;
-	wsaBuf.len = 1024;
-
+	SOCKET hLisnSock,hRecvSock;
+	
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData) == -1)
 	{
 		cout << "WSAStart Up Fail" << endl;
@@ -21,8 +31,11 @@ int OverlappedIO(int argc, char* argv[])
 	}
 
 
-	servSock =WSASocket(PF_INET, SOCK_STREAM, 0 , NULL , 0 ,WSA_FLAG_OVERLAPPED);
-	if (servSock == INVALID_SOCKET)
+	hLisnSock =WSASocket(PF_INET, SOCK_STREAM, 0 , NULL , 0 ,WSA_FLAG_OVERLAPPED);
+	u_long nonBlockingMode = 1;
+	ioctlsocket(hLisnSock, 0, &nonBlockingMode); // non blocking mode accept
+
+	if (hLisnSock == INVALID_SOCKET)
 	{
 		cout << "Socket Fail" << endl;
 		return -1;
@@ -34,66 +47,92 @@ int OverlappedIO(int argc, char* argv[])
 	sockAddr.sin_port = htons(atoi(argv[1]));
 	sockAddr.sin_addr.s_addr = htonl(INADDR_ANY);
 
-	if (-1 == bind(servSock, (sockaddr*)& sockAddr, sizeof(sockAddr)))
+	if (-1 == bind(hLisnSock, (sockaddr*)& sockAddr, sizeof(sockAddr)))
 	{
 		cout << "Bind Error" << endl;
 		return -1;
 	}
 
-	if (listen(servSock, 5) == -1)
+	if (listen(hLisnSock, 5) == -1)
 	{
 		cout << "Listen Error" << endl;
 		return -1;
 	}
 	int szClntAddr = 0;
 
-	clntSock = accept(servSock, (SOCKADDR*)& sockAddr, &szClntAddr);
 
-	DWORD recvByte = 0;
-	DWORD flag = 0;
-	DWORD sendByte = 0;
-
-	WSAOVERLAPPED overlapped;
-
-	WSAEVENT eventObj;
-
-	eventObj = WSACreateEvent();
-
-	overlapped.hEvent = eventObj;
-
-
-	if (WSARecv(clntSock, &wsaBuf, 1, &recvByte, &flag, &overlapped, NULL) == SOCKET_ERROR)
+	while (1)
 	{
-		if (WSAGetLastError() == WSA_IO_PENDING)
+		SleepEx(100, 1);
+		hRecvSock = accept(hLisnSock, (SOCKADDR*)& sockAddr, &szClntAddr);
+		if (hRecvSock == INVALID_SOCKET)
 		{
-			cout << "Background Data Recv...." << endl;
-			WSAWaitForMultipleEvents(1, &eventObj, true, WSA_INFINITE, false);
-			if (WSAGetOverlappedResult(clntSock, &overlapped, &recvByte, 0, NULL))
+			if (WSAEWOULDBLOCK == WSAGetLastError())
 			{
-				cout << "Recv Finish" << endl;
+				continue;
+			}
+			else
+			{
+				ErrorMessage("Accept Error");
 			}
 		}
-	}
-	//WSASend에서 dwFlag는?
-	//WSARecv에서는 flag변수의 주소를 넣어줫는데,,?
-	if (WSASend(clntSock, &wsaBuf, 1, &sendByte, 0, &overlapped, NULL) == SOCKET_ERROR)
-	{
-		if (WSAGetLastError() == WSA_IO_PENDING)
-		{
-			cout << "Background Date Send.." << endl;
-			if (WSAGetOverlappedResult(clntSock, &overlapped, &sendByte, 0, NULL))
-			{
-				cout << "Send Finish" << endl;
-			}
-		}
+		cout << "Connected Client...." << endl;
+		LP_PER_IO_DATA pioData = (LP_PER_IO_DATA)malloc(sizeof(PER_IO_DATA));
+
+		pioData->recvSock = hRecvSock;
+		pioData->wsaBuf.buf = pioData->buf;
+		pioData->wsaBuf.len = BUF_SIZE;
+
+		WSAOVERLAPPED* wsaOverlapped = (WSAOVERLAPPED*)malloc(sizeof(WSAOVERLAPPED));
+
+		wsaOverlapped->hEvent = (HANDLE)pioData;
+
+		DWORD recvByte = 0;
+		DWORD dwFlag = 0;
+
+		WSARecv(hRecvSock, &(pioData->wsaBuf), 1, &recvByte, &dwFlag, wsaOverlapped, ReadCompRoutine);
 	}
 
-	closesocket(clntSock);
-	closesocket(servSock);
-	WSACloseEvent(eventObj);
+
+	closesocket(hRecvSock);
+	closesocket(hLisnSock);
 
 	WSACleanup();
 
 
 	return 0;
+}
+
+void CALLBACK ReadCompRoutine(DWORD dwError, DWORD szRecvBytes, LPWSAOVERLAPPED lpOverlapped, DWORD flags)
+{
+	
+	LP_PER_IO_DATA temp = (LP_PER_IO_DATA)lpOverlapped->hEvent;
+	SOCKET hRecvSocket = temp->recvSock;
+	DWORD sentByte = 0;
+	DWORD dwFlag = 0;
+	
+	//Client -> EOF
+	if (szRecvBytes == 0)
+	{
+		free(temp);
+		free(lpOverlapped);
+		closesocket(hRecvSocket);
+	}
+	else
+	{
+		temp->wsaBuf.len = szRecvBytes;
+		WSASend(hRecvSocket, &(temp->wsaBuf), 1, &sentByte, 0, lpOverlapped, WriteCompRoutine);
+	}
+	
+}
+
+void CALLBACK WriteCompRoutine(DWORD dwError, DWORD szRecvBytes, LPWSAOVERLAPPED lpOverlapped, DWORD flags)
+{
+
+	//LP_PER_IO_DATA temp = (LP_PER_IO_DATA)lpOverlapped->hEvent;
+	//SOCKET hRecvSocket = temp->recvSock;
+	//DWORD sentByte = 0;
+	//DWORD dwFlag = 0;
+
+	//WSASend(hRecvSocket, &(temp->wsaBuf.buf), 1, &sentByte, 0, lpOverlapped, WriteCompRoutione);
 }

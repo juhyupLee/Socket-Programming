@@ -11,9 +11,6 @@ void Server_TCP_19(int argc, char* argv[])
 
 	SOCKET hServSock, hCIntSock;
 
-	PSOCKADDR_IN a;
-	
-	
 	SOCKADDR_IN servAddr, cIntAddr;
 
 	int cIntAdrSize;
