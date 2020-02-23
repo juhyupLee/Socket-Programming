@@ -5,7 +5,8 @@
 #include "CriticalSection_1.h"
 #include "Semaphore_1.h"
 #include "AsyncServer.h"
-#include "OverlappedIO.h"
+//#include "OverlappedIO.h"
+#include "IOCP.h"
 int main(int argc, char* argv[])
 {
 
@@ -16,8 +17,8 @@ int main(int argc, char* argv[])
 	//Critical_Section_1(argc, argv);
 	//Semaphroe_1(argc, argv);
 	//AsyncServer(argc, argv);
-	OverlappedIO(argc, argv);
-
+	//OverlappedIO(argc, argv);
+	IOCP(argc, argv);
 
 
 }
