@@ -5,5 +5,4 @@ void ErrorMessage(const char* str)
 {
 	cout << str << endl;
 	exit(1);
-
 }

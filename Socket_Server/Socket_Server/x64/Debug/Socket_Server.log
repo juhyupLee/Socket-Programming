@@ -1,8 +1,0 @@
-﻿  IOCP.cpp
-D:\Project reposit\Socket Programming\Socket_Server\Socket_Server\IOCP.cpp(51,16): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-D:\Project reposit\Socket Programming\Socket_Server\Socket_Server\IOCP.cpp(42,14): warning C4101: 'servAdr' :참조되지 않은 지역 변수입니다.
-D:\Project reposit\Socket Programming\Socket_Server\Socket_Server\IOCP.cpp(41,9): warning C4101: 'hServSock' :참조되지 않은 지역 변수입니다.
-D:\Project reposit\Socket Programming\Socket_Server\Socket_Server\IOCP.cpp(38,20): warning C4101: 'handleInfo' :참조되지 않은 지역 변수입니다.
-D:\Project reposit\Socket Programming\Socket_Server\Socket_Server\IOCP.cpp(37,16): warning C4101: 'ioInfo' :참조되지 않은 지역 변수입니다.
-D:\Project reposit\Socket Programming\Socket_Server\Socket_Server\IOCP.cpp(43,6): warning C4101: 'recvBytes' :참조되지 않은 지역 변수입니다.
-D:\Project reposit\Socket Programming\Socket_Server\Socket_Server\IOCP.cpp(64): error C4700: 초기화되지 않은 'temp' 지역 변수를 사용했습니다.
