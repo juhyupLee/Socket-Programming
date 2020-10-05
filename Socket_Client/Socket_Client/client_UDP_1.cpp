@@ -54,7 +54,6 @@ void Client_UDP_1(int argc, char* argv[])
 		strLen = recv(sock, message, sizeof(message)-1, 0); // recvfrom을 안쓰네 어째서? : 마찬가지로 위에 connect를써서 그렇다.
 		message[strLen] = 0;
 		cout << "Message from server:" << message << endl;
-
 	}
 	closesocket(sock);
 	WSACleanup();

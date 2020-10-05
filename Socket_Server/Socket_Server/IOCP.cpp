@@ -8,6 +8,8 @@
 
 #pragma comment(lib,"ws2_32.lib")
 
+#define PORT "9100"
+#define IP "127.0.0.1"
 using namespace std;
 
 #define BUF_SIZE 100
@@ -29,7 +31,7 @@ typedef struct
 }PER_IO_DATA, *LPPER_IO_DATA;
 
 DWORD WINAPI EchoThreadMain(void* CompletionPortIO);
-int IOCP(int argc, char* argv[])
+int IOCP()
 {
 	WSADATA wsaData;
 	HANDLE hComPort; //CP 오브젝트
@@ -53,16 +55,17 @@ int IOCP(int argc, char* argv[])
 	// NumberOfCurrentThreads 를 0으로 전달하면, 현재 코어의 수만큼 스레드가 CP 오브젝트에 할당될 수 있다.
 
 	GetSystemInfo(&sysInfo);
-	for (i = 0; i < sysInfo.dwNumberOfProcessors; ++i)
+	for (i = 0; i < sysInfo.dwNumberOfProcessors*2; ++i)
 	{
 		_beginthreadex(NULL, 0, (_beginthreadex_proc_type)EchoThreadMain, (LPVOID)&hComPort, 0, NULL);
 	}
 
-	hServSock = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
+	//hServSock = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
+	hServSock = socket(AF_INET, SOCK_STREAM, 0);
 	memset(&servAdr, 0, sizeof(servAdr));
 	servAdr.sin_family = AF_INET;
 	servAdr.sin_addr.s_addr = htonl(INADDR_ANY);
-	servAdr.sin_port = htons(atoi(argv[1]));
+	servAdr.sin_port = htons(atoi(PORT));
 
 	bind(hServSock, (SOCKADDR*)&servAdr, sizeof(servAdr));
 	listen(hServSock, 5);
@@ -97,15 +100,33 @@ DWORD WINAPI EchoThreadMain(void* pComPort)
 	HANDLE hComPort = (HANDLE)pComPort;
 	SOCKET sock;
 	DWORD bytesTrans;
-	LPPER_HANDLE_DATA handleInfo=nullptr;
-	LPPER_IO_DATA ioInfo=nullptr;
+	LPPER_HANDLE_DATA handleInfo;
+	LPPER_IO_DATA ioInfo;
 	DWORD flags = 0;
 
 	while (1)
 	{
 		//입출력이 완료되면 overlapped 에 대한 정보를받아오는데,
 		//그것을 노려서 overlapped를 첫멤버로한 IOINFO 구조체를 만들어 io에대한 정보를 가져온다.
-		GetQueuedCompletionStatus(hComPort, &bytesTrans, (PULONG_PTR)&handleInfo, (LPOVERLAPPED*)&ioInfo, INFINITE);
+		BOOL bOK =GetQueuedCompletionStatus(hComPort, &bytesTrans, (PULONG_PTR)&handleInfo, (LPOVERLAPPED*)&ioInfo, INFINITE);
+		DWORD error = GetLastError();
+
+		if (bOK)
+		{
+			int a = 10;
+		}
+		else
+		{
+			if (ioInfo != NULL)
+			{
+
+			}
+			else
+			{
+
+			}
+		}
+
 		sock = handleInfo->hClntSock;
 
 		if (ioInfo->rwMode == READ)

@@ -5,6 +5,8 @@
 #include <iostream>
 #include "interface_Func.h"
 
+#define SERVERIP "127.0.0.1"
+#define SERVERPORT "9000"
 using namespace std;
 enum
 {
@@ -19,11 +21,6 @@ void Client_TCP_1(int argc, char* argv[])
 	int strLen;
 	SOCKADDR_IN servAddr;
 
-	if (argc != 3)
-	{
-		cout << "Usage:" << argv[0] << "<port>" << endl;
-		exit(1);
-	}
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
 	{
 		ErrorMessage("WSAStartup() Error");
@@ -38,8 +35,8 @@ void Client_TCP_1(int argc, char* argv[])
 
 	memset(&servAddr, 0, sizeof(servAddr));
 	servAddr.sin_family = AF_INET;
-	servAddr.sin_addr.s_addr = inet_addr(argv[1]);
-	servAddr.sin_port = htons(atoi(argv[2]));
+	servAddr.sin_addr.s_addr = inet_addr(SERVERIP);
+	servAddr.sin_port = htons(atoi(SERVERPORT));
 
 	if (connect(hSocket, (SOCKADDR*)& servAddr, sizeof(servAddr)) == SOCKET_ERROR)
 	{
@@ -52,7 +49,6 @@ void Client_TCP_1(int argc, char* argv[])
 
 	while (1)
 	{
-
 		fputs("Input message(Q to quit): ", stdout);
 		fgets(message, eBUF_SIZE, stdin);
 
